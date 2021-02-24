@@ -5,7 +5,7 @@ import java.util.Map;
 
 public interface UserDAO {
 
-	List<Map<String,String>> getUserList();
+	List<Map<String,String>> getUserList(Map<String,String> pUser);
 	
 	
 }

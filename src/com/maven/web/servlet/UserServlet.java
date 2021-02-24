@@ -27,16 +27,19 @@ public class UserServlet extends HttpServlet {
 		String url = request.getRequestURI();
 		int idx = url.lastIndexOf("/");
 		String cmd = url.substring(idx+1);
-		String path = "";
 		if(cmd!=null) {
-			if("list".equals(cmd)) {
-				List<Map<String, String>> userList = userDAO.getUserList();
-				System.out.println(userList);
+			if("user-list".equals(cmd)) {
+				Map<String,String> pUser = new HashMap<>();
+				pUser.put("ui_id", request.getParameter("ui_id"));
+				pUser.put("ui_name", request.getParameter("ui_name"));
+				pUser.put("ui_phone", request.getParameter("ui_phone"));
+				pUser.put("ui_address", request.getParameter("ui_address"));
+				System.out.println(pUser);
+				List<Map<String, String>> userList = userDAO.getUserList(pUser);
 				request.setAttribute("userList", userList);
-				path = "/WEB-INF/views/user/user-list.jsp";
 			}
 		}
-		RequestDispatcher requestDispatcher = request.getRequestDispatcher(path);
+		RequestDispatcher requestDispatcher = request.getRequestDispatcher("/views" + url);
 		requestDispatcher.forward(request, response);
 	}
 	

@@ -1,6 +1,7 @@
 package com.maven.web.servlet;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,20 +17,23 @@ import com.maven.web.dao.impl.TheaterDAOImpl;
 public class TheaterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TheaterDAO theaterDAO = new TheaterDAOImpl(); 
-       
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String url = request.getRequestURI();
 		int idx = url.lastIndexOf("/");
 		String cmd = url.substring(idx+1);
-		String path = "";
-		if("list".equals(cmd)) {
-			List<Map<String, String>> theaterList = theaterDAO.getTheaterList();
+		
+		if("theater-list".equals(cmd)) {
+			String tiName = request.getParameter("ti_name");
+			String tiAddress = request.getParameter("ti_address");
+			Map<String,String> ti = new HashMap<>();
+			ti.put("ti_name", tiName);
+			ti.put("ti_address", tiAddress);
+			List<Map<String, String>> theaterList = theaterDAO.getTheaterList(ti);
 			request.setAttribute("theaterList", theaterList);
-			path = "/theater-list.jsp";
 			
 		}
 		RequestDispatcher requestDispatcher = 
-				request.getRequestDispatcher(path);
+				request.getRequestDispatcher("/views" + url);
 		requestDispatcher.forward(request, response);
 	}
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

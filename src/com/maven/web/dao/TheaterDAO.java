@@ -5,6 +5,6 @@ import java.util.Map;
 
 public interface TheaterDAO {
 
-	List<Map<String,String>> getTheaterList();
+	List<Map<String,String>> getTheaterList(Map<String,String> pti);
 	
 }

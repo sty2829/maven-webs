@@ -2,6 +2,7 @@ package com.maven.web.dao.impl;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,7 +16,7 @@ import com.maven.web.dao.TheaterDAO;
 public class TheaterDAOImpl implements TheaterDAO {
 
 	@Override
-	public List<Map<String, String>> getTheaterList() {
+	public List<Map<String, String>> getTheaterList(Map<String,String> pti) {
 		try {
 			Class.forName("oracle.jdbc.OracleDriver");
 		} catch (ClassNotFoundException e) {
@@ -24,15 +25,36 @@ public class TheaterDAOImpl implements TheaterDAO {
 		String url = "jdbc:oracle:thin:@localhost:1521/xe";
 		String id = "jtest";
 		String pwd = "ezen1234";
-		String sql = "select * from theater_info order by ti_num";
+		String sql = "select * from theater_info where 1=1";
+		int cnt = 0;
+		if(pti!=null) {
+			if(pti.get("ti_name") != null && !"".equals(pti.get("ti_name"))) {
+				sql += " and ti_name like '%' || ? || '%'";
+				cnt++;
+			}
+			if(pti.get("ti_address") != null && !"".equals(pti.get("ti_address"))) {
+				sql += " and ti_address like '%' || ? || '%'";
+				cnt++;
+			}
+		}
+
+		sql += " order by ti_num";
 		Connection con = null;
-		Statement st = null;
+		PreparedStatement ps = null;
 		ResultSet rs = null;
 		List<Map<String,String>> theaterList = new ArrayList<>();
 		try {
 			con = DriverManager.getConnection(url, id, pwd);
-			st = con.createStatement();
-			rs = st.executeQuery(sql);
+			ps = con.prepareStatement(sql);
+			if(pti!=null) {
+				if(pti.get("ti_address") != null && !"".equals(pti.get("ti_address"))) {
+					ps.setString(cnt--, pti.get("ti_address"));
+				}
+				if(pti.get("ti_name") != null && !"".equals(pti.get("ti_name"))) {
+					ps.setString(cnt--, pti.get("ti_name"));
+				}
+			}
+			rs = ps.executeQuery();
 			while(rs.next()){
 				Map<String,String> theater = new HashMap<>();
 				theater.put("ti_num", rs.getString("ti_num"));
@@ -53,9 +75,9 @@ public class TheaterDAOImpl implements TheaterDAO {
 					e.printStackTrace();
 				}
 			}
-			if(st!=null) {
+			if(ps!=null) {
 				try {
-					st.close();
+					ps.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
