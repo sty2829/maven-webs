@@ -40,14 +40,25 @@ public class SortTest5 {
 		p.setName("꺾정");
 		p.setAge(5);
 		pList.add(p);
+		p.setName("호우");
+		p.setAge(3);
+		pList.add(p);
+		p = new Person();
+		p.setName("카이");
+		p.setAge(8);
+		pList.add(p);
 
-		Collections.sort(pList, new Comparator<Person>(){
-
+		Collections.sort(pList, new Comparator<Person>() {
 			@Override
 			public int compare(Person o1, Person o2) {
+				if(o1.getAge() > o2.getAge()) {
+					return 1;
+				}
+				if(o1.getAge() < o2.getAge()) {
+					return -1;
+				}
 				return 0;
 			}
-			
 		});
 		
 		for(Person person : pList) {
